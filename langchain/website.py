@@ -1,12 +1,15 @@
 import streamlit as st
 import requests
 import googlemaps
-
+import dotenv
+import os
 
 # Set up Google Places API
 LOCATION = 'Hsinchu, Taiwan'
 SEARCH_QUERY = 'burger'
-gmaps = googlemaps.Client(key='AIzaSyD7aKMAk_K4LOsxHKMYj2gME_YmCRXkzGI')
+dotenv.load_dotenv()
+MAPS_KEY = os.getenv('MAPS_KEY')
+gmaps = googlemaps.Client(key=MAPS_KEY)
 
 
 def get_restaurants():
