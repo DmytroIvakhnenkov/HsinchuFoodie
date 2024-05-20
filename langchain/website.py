@@ -94,12 +94,12 @@ def main():
                 rating = place.get('rating', 'N/A')
                 place_id = place.get('place_id')
                 place_details = gmaps.place(place_id)["result"]
-                if st.button('Get reviews summary', key=p):
-                    diplay_summary(place_details)
                 address = place.get('formatted_address')
                 st.subheader(name)
                 st.write(f"Rating: {rating}")
-                st.write(f"Address: {address}")
+                # st.write(f"Address: {address}")
+                if st.button('Get reviews summary', key=p):
+                    diplay_summary(place_details)
                 # Create a button
                 
                 st.write("---")
