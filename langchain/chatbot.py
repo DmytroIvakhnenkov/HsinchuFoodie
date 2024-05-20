@@ -7,43 +7,44 @@ from langchain.prompts import (
     ChatPromptTemplate,
 )
 
-dotenv.load_dotenv()
 
-review_template_str = """Your job is to use patient
-reviews to answer questions about their experience at
-a hospital. Use the following context to answer questions.
-Be as detailed as possible, but don't make up any information
-that's not from the context. If you don't know an answer, say
-you don't know.
+review_template_str = """Your job is to use Google Maps
+reviews to summarize all of the given interviews as well as provide
+key features of the place with one or two words (positive, negative and neutral). Please, provide the output in a JSON format
+with the following keys:
+summary, positive_features, negative_features, neutral_features
 
-{context}
+If the features are longer than 2 words, shorten them to two words. 
+For example: positive feature is "wide drinks selection" shorten it to "drinks selection".
 """
 
-review_system_prompt = SystemMessagePromptTemplate(
-    prompt=PromptTemplate(
-        input_variables=["context"],
-        template=review_template_str,
-    )
-)
+class ChatBot:
+    def __init__(self):
+        review_system_prompt = SystemMessagePromptTemplate(
+            prompt=PromptTemplate(
+                input_variables=[],
+                template=review_template_str,
+            )
+        )
 
-review_human_prompt = HumanMessagePromptTemplate(
-    prompt=PromptTemplate(
-        input_variables=["question"],
-        template="{question}",
-    )
-)
-messages = [review_system_prompt, review_human_prompt]
+        review_human_prompt = HumanMessagePromptTemplate(
+            prompt=PromptTemplate(
+                input_variables=["question"],
+                template="{question}",
+            )
+        )
+        messages = [review_system_prompt, review_human_prompt]
 
-review_prompt_template = ChatPromptTemplate(
-    input_variables=["context", "question"],
-    messages=messages,
-)
+        review_prompt_template = ChatPromptTemplate(
+            input_variables=["question"],
+            messages=messages,
+        )
 
-chat_model = ChatOpenAI(model="gpt-3.5-turbo-0125", temperature=0)
+        chat_model = ChatOpenAI(model="gpt-4o-2024-05-13", temperature=0)
 
-review_chain = review_prompt_template | chat_model
+        review_chain = review_prompt_template | chat_model
 
+        self.review_chain = review_chain
 
-context = "I had a great stay!"
-question = "Did anyone have a positive experience?"
-print(review_chain.invoke({"context": context, "question": question}))
+    def call_chat(self, question):
+        return self.review_chain.invoke({"question": question})
